@@ -16,7 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../SwiftHooks"),
-        .package(url: "https://github.com/vapor/vapor", from: "4.0.0-beta.2.1"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta.2.1"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
