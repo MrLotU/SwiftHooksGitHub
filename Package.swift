@@ -15,7 +15,7 @@ let package = Package(
             targets: ["GitHub"]),
     ],
     dependencies: [
-        .package(path: "../SwiftHooks"),
+        .package(url: "https://github.com/MrLotU/SwiftHooks.git", .branch("master")),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta.2.1"),
     ],
     targets: [
