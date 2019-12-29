@@ -11,18 +11,19 @@ public typealias GitHub = GitHubEvent
 public final class GitHubHook: Hook {
     public typealias Options = GitHubHookOptions
     
-    public init(_ options: GitHubHookOptions) {
+    public init(_ options: GitHubHookOptions, _ elg: EventLoopGroup) {
+        self.eventLoopGroup = elg
         self.options = options
         self.githubListeners = [:]
         self.lock = Lock()
     }
     
-    public func boot(on elg: EventLoopGroup, hooks: SwiftHooks? = nil) throws {
+    public func boot(hooks: SwiftHooks? = nil) throws {
         self.hooks = hooks
         let app: Application
         switch options {
         case .createApp(let host, let port):
-            app = Application(.custom(name: "SwiftHooks"), .shared(elg))
+            app = Application(.custom(name: "SwiftHooks"), .shared(self.eventLoopGroup))
             app.server.configuration.hostname = host
             app.server.configuration.port = port
         case .shared(let sharedApp):
@@ -50,6 +51,7 @@ public final class GitHubHook: Hook {
     
     private let options: GitHubHookOptions
     public private(set) var hooks: SwiftHooks?
+    public let eventLoopGroup: EventLoopGroup
     private var app: Application?
     private let lock: Lock
     public internal(set) var githubListeners: [GitHubEvent: [EventClosure]]
