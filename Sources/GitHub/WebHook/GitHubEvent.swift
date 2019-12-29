@@ -55,9 +55,9 @@ public enum GitHubEvent: String, Codable, EventType {
     case _teamAdd = "team_add"
     case _watch = "watch"
     
-    static let issues = _GitHubEvent(GitHubEvent._issues, Issues.self)
-    static let issueComment = _GitHubEvent(GitHubEvent._issueComment, IssueComment.self)
-    static let pullRequest = _GitHubEvent(GitHubEvent._pullRequest, PullRequestEvent.self)
+    public static let issues = _GitHubEvent(GitHubEvent._issues, Issues.self)
+    public static let issueComment = _GitHubEvent(GitHubEvent._issueComment, IssueComment.self)
+    public static let pullRequest = _GitHubEvent(GitHubEvent._pullRequest, PullRequestEvent.self)
 }
 
 public struct Unimplemented: PayloadType, Codable {

@@ -1,4 +1,4 @@
-public struct IssueComment: PayloadType {
+public struct IssueComment: GitHubPayload {
     public enum IssueAction: String, Codable {
         case created, edited, deleted
     }
@@ -27,7 +27,7 @@ extension IssueComment: Messageable {
     public func delete() {}
 }
 
-public struct Issues: PayloadType {
+public struct Issues: GitHubPayload {
     public enum IssuesAction: String, Codable {
         case opened, edited, deleted, pinned, unpinned, closed
         case reopened, assigned, unassigned, labeled, unlabeled
@@ -40,7 +40,7 @@ public struct Issues: PayloadType {
     let sender: User
 }
 
-public struct PullRequestEvent: PayloadType {
+public struct PullRequestEvent: GitHubPayload {
     public enum PullRequestAction: String, Codable {
         case assigned, unassigned, reviewRequested, reviewRequestRemoved
         case labeled, unlabeled, opened, edited, closed, readyForReview

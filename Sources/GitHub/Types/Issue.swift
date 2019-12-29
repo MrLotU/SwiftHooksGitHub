@@ -13,9 +13,9 @@ public struct Issue: Codable {
     public let labels: [Label]
     public let state: String
     public let locked: Bool
-    public let assignee: User
+    public let assignee: User?
     public let assignees: [User]
-    public let milestone: Milestone
+    public let milestone: Milestone?
     public let comments: Int
     public let createdAt: String
     public let updatedAt: String
