@@ -10,7 +10,7 @@ public struct IssueComment: GitHubPayload {
 }
 
 extension IssueComment: Messageable {
-    public var channel: Channelable {
+    public var gChannel: Channelable {
         self.issue
     }
     
@@ -18,7 +18,7 @@ extension IssueComment: Messageable {
         self.comment.body
     }
     
-    public var author: Userable {
+    public var gAuthor: Userable {
         self.sender
     }
     

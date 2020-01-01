@@ -65,7 +65,7 @@ public final class GitHubHook: Hook {
         lock.withLockVoid {
         var closures = self.githubListeners[event, default: []]
             closures.append { (data) in
-                guard let object = I.init(data) else {
+                guard let object = I.create(from: data) else {
                     SwiftHooks.logger.debug("Unable to extract \(I.self) from data.")
                     return
                 }
@@ -122,7 +122,7 @@ enum GitHubEventTranslator: EventTranslator {
     static func decodeConcreteType<T>(for event: GlobalEvent, with data: Data, as t: T.Type) -> T? {
         switch event {
         case ._messageCreate:
-            return IssueComment(data) as? T
+            return IssueComment.create(from: data) as? T
 //        default:
 //            return nil
         }

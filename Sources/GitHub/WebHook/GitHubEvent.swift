@@ -61,7 +61,7 @@ public enum GitHubEvent: String, Codable, EventType {
 }
 
 public struct Unimplemented: PayloadType, Codable {
-    init?(data: Data) {
+    public static func create(from data: Data) -> Unimplemented? {
         SwiftHooks.logger.warning("Trying to listen for an unimplemented event.")
         return nil
     }
