@@ -58,18 +58,20 @@ public final class GitHubHook: Hook {
     
     public static let id: HookID = .gitHub
     
-    public let translator: EventTranslator.Type = GitHubEventTranslator.self
-    
-    public func listen<T, I>(for event: T, handler: @escaping (I) throws -> Void) where T : _Event, I == T.ContentType {
-        guard let event = event as? _GitHubEvent<GitHubEvent, I> else { return }
+    public func listen<T, I, D>(for event: T, handler: @escaping EventHandler<D, I>) where T : _Event, I == T.ContentType, T.D == D {
+        guard let event = event as? _GitHubEvent<I> else { return }
         lock.withLockVoid {
-        var closures = self.githubListeners[event, default: []]
+            var closures = self.githubListeners[event, default: []]
             closures.append { (data) in
-                guard let object = I.create(from: data) else {
+                guard let object = I.create(from: data, on: self) else {
                     SwiftHooks.logger.debug("Unable to extract \(I.self) from data.")
                     return
                 }
-                try handler(object)
+                guard let d = D.init(self) else {
+                    SwiftHooks.logger.debug("Unable to wrap \(I.self) in \(D.self) dispatch.")
+                    return
+                }
+                try handler(d, object)
             }
             self.githubListeners[event] = closures
         }
@@ -91,25 +93,8 @@ public final class GitHubHook: Hook {
             }
         }
     }
-}
-
-public enum GitHubHookOptions: HookOptions {
-    case createApp(host: String, port: Int)
-    case shared(app: Application)
-}
-
-//public struct GitHubHookOptions: HookOptions {
-//    public init(host: String, port: Int) {
-//        self.host = host
-//        self.port = port
-//    }
-//
-//    let host: String
-//    let port: Int
-//}
-
-enum GitHubEventTranslator: EventTranslator {
-    static func translate<E>(_ event: E) -> GlobalEvent? where E : EventType {
+    
+    public func translate<E>(_ event: E) -> GlobalEvent? where E : EventType {
         guard let event = event as? GitHubEvent else { return nil }
         switch event {
         case ._issueComment:
@@ -119,12 +104,17 @@ enum GitHubEventTranslator: EventTranslator {
         }
     }
     
-    static func decodeConcreteType<T>(for event: GlobalEvent, with data: Data, as t: T.Type) -> T? {
+    public func decodeConcreteType<T>(for event: GlobalEvent, with data: Data, as t: T.Type) -> T? {
         switch event {
         case ._messageCreate:
-            return IssueComment.create(from: data) as? T
-//        default:
-//            return nil
+            return IssueComment.create(from: data, on: self) as? T
+            //        default:
+            //            return nil
         }
     }
+}
+
+public enum GitHubHookOptions: HookOptions {
+    case createApp(host: String, port: Int)
+    case shared(app: Application)
 }
