@@ -58,8 +58,6 @@ public final class GitHubHook: Hook {
     
     public static let id: HookID = .gitHub
     
-    //    public let translator: EventTranslator.Type = GitHubEventTranslator.self
-    
     public func listen<T, I, D>(for event: T, handler: @escaping EventHandler<D, I>) where T : _Event, I == T.ContentType, T.D == D {
         guard let event = event as? _GitHubEvent<I> else { return }
         lock.withLockVoid {
@@ -120,13 +118,3 @@ public enum GitHubHookOptions: HookOptions {
     case createApp(host: String, port: Int)
     case shared(app: Application)
 }
-
-//public struct GitHubHookOptions: HookOptions {
-//    public init(host: String, port: Int) {
-//        self.host = host
-//        self.port = port
-//    }
-//
-//    let host: String
-//    let port: Int
-//}
