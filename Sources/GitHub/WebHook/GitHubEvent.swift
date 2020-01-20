@@ -1,8 +1,19 @@
 import Foundation
+import protocol NIO.EventLoop
 
-public struct _GitHubEvent<E: EventType, ContentType: PayloadType>: _Event {
-    public let event: E
+public struct GitHubDispatch: EventDispatch {
+    public let eventLoop: EventLoop
+    
+    public init(_ h: _Hook) {
+        self.eventLoop = h.eventLoopGroup.next()
+    }
+}
+
+public struct _GitHubEvent<ContentType: PayloadType>: _Event {
     public typealias Hook = GitHubHook
+    public typealias E = GitHubEvent
+    public typealias D = GitHubDispatch
+    public let event: E
     public init(_ e: E, _ t: ContentType.Type) {
         self.event = e
     }
@@ -55,9 +66,9 @@ public enum GitHubEvent: String, Codable, EventType {
     case _teamAdd = "team_add"
     case _watch = "watch"
     
-    public static let issues = _GitHubEvent(GitHubEvent._issues, Issues.self)
-    public static let issueComment = _GitHubEvent(GitHubEvent._issueComment, IssueComment.self)
-    public static let pullRequest = _GitHubEvent(GitHubEvent._pullRequest, PullRequestEvent.self)
+    public static let issues = _GitHubEvent(._issues, Issues.self)
+    public static let issueComment = _GitHubEvent(._issueComment, IssueComment.self)
+    public static let pullRequest = _GitHubEvent(._pullRequest, PullRequestEvent.self)
 }
 
 public struct Unimplemented: PayloadType, Codable {

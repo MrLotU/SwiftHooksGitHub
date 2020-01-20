@@ -1,8 +1,8 @@
 import Foundation
 
 public protocol GitHubPayload: PayloadType { }
-extension GitHubPayload {
-    public static func create(from data: Data) -> GitHubPayload? {
+public extension GitHubPayload {
+    static func create(from data: Data, on h: _Hook) -> Self? {
         do {
             return try GitHubHook.decoder.decode(Self.self, from: data)
         } catch {
